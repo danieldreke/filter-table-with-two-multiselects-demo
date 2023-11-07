@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bootstrap Multiselect Demo</title>
+  <title>Filter Table with Multiselect Demo</title>
   <!-- source working references: https://github.com/jorgelf/bootstrap-multiselect-showselected -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" type="text/css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -17,17 +17,73 @@
 <select id="example-getting-started" multiple="multiple">
   <option value="cheese">Cheese</option>
   <option value="tomatoes">Tomatoes</option>
-  <option value="Onions">Onions</option>
+  <option value="onions">Onions</option>
 </select>
 <script type="text/javascript">
   $(document).ready(function() {
     $('#example-getting-started').multiselect({
       // source configuration options: https://davidstutz.github.io/bootstrap-multiselect/#configuration-options
       includeSelectAllOption: true,
-      numberDisplayed: 1,
-      buttonWidth: '170px'
+      selectAllValue: '',
+      numberDisplayed: 0,
+      buttonWidth: '170px',
+      dropRight: true,
+      onChange: function(option, checked) {
+        filter();
+      },
+      onSelectAll: function(options) {
+        filter();
+      }
     });
   });
+</script>
+<br>
+<br>
+<table id="myTable">
+  <tr>
+    <td>1</td>
+    <td>Cheese</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Tomatoes</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Onions</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Cheese</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Onions</td>
+  </tr>
+</table>
+<script>
+  function filter() {
+    // Loop checkboxes
+    let selectedvalues = new Set()
+    for (let cbox of document.getElementsByClassName('form-check-input')) {
+      if (cbox.checked) {
+        selectedvalues.add(cbox.value.toLowerCase())
+      }
+    }
+    // Loop table rows and show only filtered/selected ones
+    const table = document.getElementById("myTable");
+    for (let row of table.rows) {
+      let td = row.getElementsByTagName("td")[1];
+      if (td) {
+        let tdValue = td.textContent || td.innerText;
+        let displayRow = false
+        if (selectedvalues.size == 0 || selectedvalues.has(tdValue.toLowerCase())) {
+          displayRow = true;
+        }
+        row.style.display = (displayRow) ? '' :'none';
+      }
+    }
+  }
 </script>
 </body>
 </html>
