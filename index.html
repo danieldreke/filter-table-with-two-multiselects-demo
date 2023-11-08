@@ -53,8 +53,8 @@
   | 4 | Cheese |
   | 5 | Onions  |
   `;
+  // code example: https://marked.js.org/#installation
   const htmlTable = marked.parse(markdownTable);
-  console.log(htmlTable);
   document.getElementById('mdtable').innerHTML = htmlTable;
 </script>
 <script>
