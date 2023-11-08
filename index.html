@@ -11,6 +11,8 @@
   <!-- source bootstrap-multiselect: https://davidstutz.github.io/bootstrap-multiselect/ -->
   <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css">
   <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+  <!-- marked.js: https://marked.js.org/#installation -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <!-- source bootstrap-multiselect: https://davidstutz.github.io/bootstrap-multiselect/ -->
@@ -39,28 +41,21 @@
 </script>
 <br>
 <br>
-<table id="myTable">
-  <tr>
-    <td>1</td>
-    <td>Cheese</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Tomatoes</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>Onions</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>Cheese</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>Onions</td>
-  </tr>
-</table>
+<table id="mdtable"></table>
+<script>
+  const markdownTable = `
+  | ID | Ingredient |
+  |---|--------|
+  | 1 | Cheese |
+  | 2 | Tomatoes |
+  | 3 | Onions  |
+  | 4 | Cheese |
+  | 5 | Onions  |
+  `;
+  const htmlTable = marked.parse(markdownTable);
+  console.log(htmlTable);
+  document.getElementById('mdtable').innerHTML = htmlTable;
+</script>
 <script>
   function filter() {
     // Loop checkboxes
@@ -71,7 +66,7 @@
       }
     }
     // Loop table rows and show only filtered/selected ones
-    const table = document.getElementById("myTable");
+    const table = document.getElementById("mdtable");
     for (let row of table.rows) {
       let td = row.getElementsByTagName("td")[1];
       if (td) {
