@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Filter Table with Multiselect Demo</title>
+  <title>Filter Table with Two Multiselects Demo</title>
   <!-- source working references: https://github.com/jorgelf/bootstrap-multiselect-showselected -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" type="text/css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -13,45 +13,80 @@
   <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
   <!-- marked.js: https://marked.js.org/#installation -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    th, td {
+      padding-left: 10px;
+      padding-right: 10px
+    }
+  </style>
 </head>
 <body>
   <!-- source bootstrap-multiselect: https://davidstutz.github.io/bootstrap-multiselect/ -->
-<select id="example-getting-started" multiple="multiple">
-  <option value="cheese">Cheese</option>
-  <option value="tomatoes">Tomatoes</option>
-  <option value="onions">Onions</option>
+<select id="multiselect-one" multiple="multiple">
+  <option value="tesla">Tesla</option>
+  <option value="toyota">Toyota</option>
+  <option value="volkswagen">Volkswagen</option>
 </select>
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('#example-getting-started').multiselect({
-      // source configuration options: https://davidstutz.github.io/bootstrap-multiselect/#configuration-options
-      includeSelectAllOption: true,
-      selectAllValue: '',
-      numberDisplayed: 0,
-      buttonWidth: '170px',
-      dropRight: true,
-      onChange: function(option, checked) {
-        filter();
-      },
-      onSelectAll: function(options) {
-        filter();
-      }
+    $(document).ready(function() {
+      $('#multiselect-one').multiselect({
+        // source configuration options: https://davidstutz.github.io/bootstrap-multiselect/#configuration-options
+        includeSelectAllOption: true,
+        selectAllValue: '',
+        numberDisplayed: 0,
+        buttonWidth: '170px',
+        nonSelectedText: 'Manufacturer',
+        dropRight: true,
+        onChange: function(option, checked) {
+          filter();
+        },
+        onSelectAll: function(options) {
+          filter();
+        }
+      });
     });
-  });
 </script>
+
+  <!-- source bootstrap-multiselect: https://davidstutz.github.io/bootstrap-multiselect/ -->
+  <select id="multiselect-two" multiple="multiple">
+    <option value="white">White</option>
+    <option value="black">Black</option>
+    <option value="silver">Silver</option>
+  </select>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#multiselect-two').multiselect({
+        // source configuration options: https://davidstutz.github.io/bootstrap-multiselect/#configuration-options
+        includeSelectAllOption: true,
+        selectAllValue: '',
+        numberDisplayed: 0,
+        buttonWidth: '170px',
+        nonSelectedText: 'Color',
+        dropRight: true,
+        onChange: function(option, checked) {
+          filter();
+        },
+        onSelectAll: function(options) {
+          filter();
+        }
+      });
+    });
+  </script>
+
 <br>
 <br>
 <table id="mdtable"></table>
 <script>
   // markdown table generator: https://www.tablesgenerator.com/markdown_tables
   const markdownTable = `
-  | ID | Ingredient |
-  |---|--------|
-  | 1 | Cheese |
-  | 2 | Tomatoes |
-  | 3 | Onions  |
-  | 4 | Cheese |
-  | 5 | Onions  |
+  | ID | Manufacturer | Color |
+  |-|-|-|
+  | 1 | Tesla | White |
+  | 2 | Tesla | Silver |
+  | 3 | Toyota | Black |
+  | 4 | Toyota | White |
+  | 5 | Volkswagen | Silver |
+  | 6 | Volkswagen | Black |
   `;
   // code example: https://marked.js.org/#installation
   const htmlTable = marked.parse(markdownTable);
@@ -59,25 +94,47 @@
 </script>
 <script>
   function filter() {
+    const parentElementColB = document.getElementById("multiselect-one").parentElement;
+    const cboxesFilterColB = parentElementColB.children.item(1).getElementsByClassName('form-check-input');
+
+    const parentElementColC = document.getElementById("multiselect-two").parentElement;
+    const cboxesFilterColC = parentElementColC.children.item(1).getElementsByClassName('form-check-input');
+
     // Loop checkboxes
-    let selectedvalues = new Set()
-    for (let cbox of document.getElementsByClassName('form-check-input')) {
+    let selectedColBvalues = new Set()
+    for (let cbox of cboxesFilterColB) {
       if (cbox.checked) {
-        selectedvalues.add(cbox.value.toLowerCase())
+        selectedColBvalues.add(cbox.value.toLowerCase())
       }
     }
+    let selectedColCvalues = new Set()
+    for (let cbox of cboxesFilterColC) {
+      if (cbox.checked) {
+        selectedColCvalues.add(cbox.value.toLowerCase())
+      }
+    }
+    //console.log(selectedColBvalues)
+    //console.log(selectedColCvalues)
+    
     // Loop table rows and show only filtered/selected ones
     const table = document.getElementById("mdtable");
     for (let row of table.rows) {
-      let td = row.getElementsByTagName("td")[1];
-      if (td) {
-        let tdValue = td.textContent || td.innerText;
-        let displayRow = false
-        if (selectedvalues.size == 0 || selectedvalues.has(tdValue.toLowerCase())) {
-          displayRow = true;
+      let colB = row.getElementsByTagName("td")[1];
+      let colC = row.getElementsByTagName("td")[2];
+      let displayRow = true
+      if (displayRow && colB) {
+        let colBvalue = colB.textContent || colB.innerText;
+        if (selectedColBvalues.size != 0 && !selectedColBvalues.has(colBvalue.toLowerCase())) {
+          displayRow = false;
         }
-        row.style.display = (displayRow) ? '' :'none';
       }
+      if (displayRow && colC) {
+        let colCvalue = colC.textContent || colC.innerText;
+        if (selectedColCvalues.size != 0 && !selectedColCvalues.has(colCvalue.toLowerCase())) {
+          displayRow = false;
+        }
+      }
+      row.style.display = (displayRow) ? '' :'none';
     }
   }
 </script>
