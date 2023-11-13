@@ -14,9 +14,25 @@
   <!-- marked.js: https://marked.js.org/#installation -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    body {
+      margin: 20px;
+    }
     th, td {
       padding-left: 10px;
       padding-right: 10px
+    }
+    .dropdown-menu {
+      background-color: rgba(222, 222, 222, 0.55) !important;
+    }
+    /* css link order rules: https://www.w3schools.com/css/css_link.asp */
+    button.multiselect-option.dropdown-item:focus
+    , button.multiselect-option.dropdown-item:hover
+    , button.multiselect-option.dropdown-item.active
+    , button.multiselect-all.dropdown-item:focus
+    , button.multiselect-all.dropdown-item:hover
+    , button.multiselect-all.dropdown-item.active
+    {
+      background-color: transparent !important;
     }
   </style>
 </head>
@@ -36,7 +52,7 @@
         numberDisplayed: 0,
         buttonWidth: '170px',
         nonSelectedText: 'Manufacturer',
-        dropRight: true,
+        //dropRight: true,
         onChange: function(option, checked) {
           filter();
         },
@@ -62,7 +78,7 @@
         numberDisplayed: 0,
         buttonWidth: '170px',
         nonSelectedText: 'Color',
-        dropRight: true,
+        //dropRight: true,
         onChange: function(option, checked) {
           filter();
         },
